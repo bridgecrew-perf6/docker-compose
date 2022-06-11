@@ -1,0 +1,128 @@
+services:
+  # shop database
+  mysql:
+    image: mysql:8.0.29
+    environment:
+      - MYSQL_SKIP_TEST_DB=yes
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=shopware
+      - MYSQL_PASSWORD=shopware
+      - MYSQL_DATABASE=shopware
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+
+  # php service for platform
+  php-fpm:
+    depends_on:
+      - mysql
+    build:
+      context: .
+      target: php-fpm
+    volumes:
+      - ./production/config/jwt:/var/www/html/config/jwt
+      - ./production/public/bundles:/var/www/html/public/bundles
+      - ./production/public/media:/var/www/html/public/media
+      - ./production/public/sitemap:/var/www/html/public/sitemap
+      - ./production/public/theme:/var/www/html/public/theme
+      - ./production/public/thumbnail:/var/www/html/public/thumbnail
+      - ./production/var:/var/www/html/var
+
+  # webserver, php-fpm via fastcgi
+  nginx:
+    depends_on:
+      - php-fpm
+    build:
+      context: .
+      target: nginx
+    volumes:
+      - ./production/config/jwt:/var/www/html/config/jwt
+      - ./production/public/bundles:/var/www/html/public/bundles
+      - ./production/public/media:/var/www/html/public/media
+      - ./production/public/sitemap:/var/www/html/public/sitemap
+      - ./production/public/theme:/var/www/html/public/theme
+      - ./production/public/thumbnail:/var/www/html/public/thumbnail
+      - ./production/var:/var/www/html/var
+
+  # elasticsearch service for shop
+  elasticsearch-shop:
+    depends_on:
+      - php-fpm
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+  # used for http cache
+  redis-cache:
+    image: redis:7.0.1-alpine
+
+  # used for php session handling
+  redis-session:
+    image: redis:7.0.1-alpine
+
+  # used for cart persistence
+  redis-cart:
+    image: redis:7.0.1-alpine
+
+  # used for storage of last used module of administration users
+  redis-increment-user-activity:
+    image: redis:7.0.1-alpine
+
+  # used for storage of the status of the message queue
+  redis-increment-message-queue:
+    image: redis:7.0.1-alpine
+
+  # remote lock store
+  redis-lock:
+    image: redis:7.0.1-alpine
+
+  # consecutive number state storage
+  redis-number-range:
+    image: redis:7.0.1-alpine
+
+  # async message sending
+  rabbitmq:
+    image: rabbitmq:3.10.5-alpine
+
+  # reverse http cache
+  varnish:
+    depends_on:
+      - nginx
+      - redis-http-cache-tags
+    image: ghcr.io/sw-in-containers/varnish:main
+    ports:
+      - 80:80
+
+  redis-http-cache-tags:
+    image: redis:7.0.1-alpine
+
+  # elk stack for logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+  logstash:
+    depends_on:
+      - elasticsearch
+    image: ghcr.io/sw-in-containers/logstash:main
+
+  filebeat:
+    depends_on:
+      - logstash
+    image: ghcr.io/sw-in-containers/filebeat:main
+    volumes:
+      - ./production/var/log:/var/log/shopware
+
+  kibana:
+    depends_on:
+      - elasticsearch
+    image: docker.elastic.co/kibana/kibana:8.2.2
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'

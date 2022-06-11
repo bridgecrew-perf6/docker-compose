@@ -2,16 +2,67 @@
     <img src=".github/project-logo.svg" width="512px">
 </h1>
 
-# Project Template
+# docker-compose
 
-This repository provides a project template containing community health files for
-the [@sw-in-containers](https://github.com/sw-in-containers/) organization.
+This repository provides a docker-compose deployment
+
+## :bulb: Features
+
+### Shopware
+
+* MySQL Database Service
+* PHP-FPM Service
+* Nginx Service
+* Redis HTTP-Caching Service
+* Redis Session Management Service
+* Redis Cart Persistence Service
+* Redis User Module Activity Service
+* Redis Message Queue Status Service
+* Redis Remote Lock Store Service
+* Redis Consecutive Number State Service
+* RabbitMQ Message Queue Service
+* Varnish Reverse HTTP Cache Service
+* Elasticsearch Service
+
+### Logging (ELK Stack)
+
+* Elasticsearch Service
+* Logstash Service
+* Filebeat Service
+* Kibana Service
+
+## :rocket: Deployment
+
+Clone the repository and its submodules
+
+```bash
+git clone --recursive git@github.com:sw-in-containers/docker-compose.git
+```
+
+To deploy the Docker environment, run
+
+```bash
+make start
+```
+
+Next, set up a simple Shopware instance with some test data
+
+```bash
+docker exec -it docker-compose-php-fpm-1 /bin/sh
+bin/console system:install --create-database --basic-setup -f
+bin/console store:download -p SwagPlatformDemoData
+bin/console plugin:refresh
+bin/console plugin:install --activate SwagPlatformDemoData
+bin/console cache:clear && bin/console cache:warmup
+```
+
+You can now access the Shop by visiting `http://localhost` and the Kibana dashboard by visiting `http://localhost:5601`.
 
 ## Feel like contributing?
 
 Read our [contribution guidelines](CONTRIBUTING.md) and create
-an [issue](https://github.com/sw-in-containers/project-template/issues/new/choose) or
-a [pull request](https://github.com/sw-in-containers/project-template/compare).
+an [issue](https://github.com/sw-in-containers/docker-compose/issues/new/choose) or
+a [pull request](https://github.com/sw-in-containers/docker-compose/compare).
 
 ## License
 

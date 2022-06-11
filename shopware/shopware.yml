@@ -1,0 +1,26 @@
+shopware:
+  admin_worker:
+    enable_admin_worker: true
+    poll_interval: 30
+    transports: [ "default" ]
+
+  # use redis for cart persistence
+  # this will come in handy later when i migrate this project to kubernetes
+  # @see https://developer.shopware.com/docs/guides/hosting/infrastructure/database-cluster
+  cart:
+    redis_url: 'redis://redis-cart:6379/0?persistent=1'
+
+  increment:
+    user_activity:
+      type: 'redis'
+      config:
+        url: 'redis://redis-increment-user-activity:6379/0'
+
+    message_queue:
+      type: 'redis'
+      config:
+        url: 'redis://redis-increment-message-queue:6379/0'
+
+  number_range:
+    increment_storage: "Redis"
+    redis_url: 'redis://redis-number-range:6379/0'

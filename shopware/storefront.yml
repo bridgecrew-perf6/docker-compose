@@ -1,0 +1,14 @@
+storefront:
+  csrf:
+    enabled: true
+    # The internal Shopware http cache replaces the csrf token on the fly. This can't be done in Reverse proxy. So we use ajax to get a csrf token
+    mode: ajax
+  reverse_proxy:
+    enabled: true
+    ban_method: "BAN"
+    # This needs to point to your varnish hosts
+    hosts: [ "http://varnish" ]
+    # Max parallel invalidations at same time for a single worker
+    max_parallel_invalidations: 3
+    # Redis Storage for the http cache tags
+    redis_url: "redis://redis-http-cache-tags:6379"
