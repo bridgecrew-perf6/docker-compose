@@ -4,7 +4,7 @@
 
 # docker-compose
 
-This repository provides a docker-compose deployment
+This repository provides a containerized Shopware example deployment using docker-compose.
 
 ## :bulb: Features
 
