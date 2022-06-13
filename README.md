@@ -49,15 +49,32 @@ To deploy the Docker environment, run
 make start
 ```
 
-Next, set up a simple Shopware instance with some test data
+Next, set up a simple Shopware instance with some test data.
+
+First, access the Shell inside the container
 
 ```bash
 docker exec -it docker-compose-php-fpm-1 /bin/sh
+```
+
+Then, create a default Shop configuration
+
+```shell
 bin/console system:install --create-database --basic-setup -f
-bin/console store:download -p SwagPlatformDemoData
-bin/console plugin:refresh
+```
+
+Almost there! Let's install some demo data.
+
+```bash
+bin/console store:download -p SwagPlatformDemoData && \
+bin/console plugin:refresh && \
 bin/console plugin:install --activate SwagPlatformDemoData
-bin/console cache:clear && bin/console cache:warmup
+```
+
+Finally, clear and warmup the caches
+
+```shell
+bin/console cache:clear && bin/console cache:warmup && http:cache:warm:up
 ```
 
 You can now access the Shop by visiting `http://localhost` and the Kibana dashboard by visiting `http://localhost:5601`.
