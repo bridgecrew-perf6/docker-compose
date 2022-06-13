@@ -3,9 +3,7 @@ FROM dockware/essentials:latest as build
 COPY ./production/ .
 
 RUN sudo chown -R www-data . \
-    && composer install --no-progress --no-interaction --no-suggest --optimize-autoloader --classmap-authoritative \
-    && bin/console cache:clear && bin/console cache:warmup
-
+    && composer install --no-progress --no-interaction --no-suggest --optimize-autoloader --classmap-authoritative
 COPY ./shopware/.env ./.env
 COPY ./shopware/framework.yml ./config/packages/framework.yml
 COPY ./shopware/install.lock ./install.lock
