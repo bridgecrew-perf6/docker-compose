@@ -74,7 +74,7 @@ bin/console plugin:install --activate SwagPlatformDemoData
 Finally, clear and warmup the caches
 
 ```shell
-bin/console cache:clear && bin/console cache:warmup && bin/console http:cache:warm:up
+bin/console cache:clear && bin/console cache:warmup
 ```
 
 You can now access the Shop by visiting `http://localhost` and the Kibana dashboard by visiting `http://localhost:5601`.
