@@ -1,9 +1,8 @@
-FROM dockware/flex:latest as build
+FROM ghcr.io/sw-in-containers/composer:main as build
 
-COPY ./production/ .
+COPY --chown=shopware ./production/ .
 
-RUN sudo chown -R www-data . \
-    && composer install --no-progress --no-interaction --no-suggest --optimize-autoloader --classmap-authoritative
+RUN composer install --no-progress --no-interaction  --optimize-autoloader --classmap-authoritative
 
 COPY ./shopware/.env ./.env
 COPY ./shopware/framework.yml ./config/packages/framework.yml

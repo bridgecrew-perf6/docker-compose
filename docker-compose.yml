@@ -1,13 +1,7 @@
 services:
   # shop database
   mysql:
-    image: mysql:8.0.29
-    environment:
-      - MYSQL_SKIP_TEST_DB=yes
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_USER=shopware
-      - MYSQL_PASSWORD=shopware
-      - MYSQL_DATABASE=shopware
+    image: ghcr.io/sw-in-containers/mysql:main
     volumes:
       - ./data/mysql:/var/lib/mysql
 
@@ -27,7 +21,7 @@ services:
       - ./production/public/thumbnail:/var/www/html/public/thumbnail
       - ./production/var:/var/www/html/var
 
-  # webserver, php-fpm via fastcgi
+  # webserver
   nginx:
     depends_on:
       - php-fpm
