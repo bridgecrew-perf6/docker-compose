@@ -6,10 +6,6 @@
 
 This repository provides a containerized Shopware example deployment using docker-compose.
 
-## :warning: Disclaimer
-
-A Kubernetes deployment is already in work!
-
 ## :bulb: Features
 
 ### Shopware
