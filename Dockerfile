@@ -7,6 +7,7 @@ RUN composer install --no-progress --no-interaction  --optimize-autoloader --cla
 COPY ./shopware/.env ./.env
 COPY ./shopware/framework.yml ./config/packages/framework.yml
 COPY ./shopware/install.lock ./install.lock
+COPY ./shopware/services.yml ./services.yml
 COPY ./shopware/shopware.yml ./config/packages/shopware.yml
 COPY ./shopware/storefront.yml ./config/packages/storefront.yml
 
